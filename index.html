@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instant Weather V2 - Prévisions Météorologiques</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-cloud-sun"></i>
+                    <h1>Instant Weather</h1>
+                </div>
+                <p class="subtitle">Prévisions météorologiques précises et détaillées</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Search Form -->
+            <section class="search-section">
+                <div class="search-card">
+                    <h2>Rechercher une commune</h2>
+                    <form id="weather-form" class="weather-form">
+                        <!-- City Input -->
+                        <div class="form-group">
+                            <label for="city-input">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Nom de la commune
+                            </label>
+                            <input 
+                                type="text" 
+                                id="city-input" 
+                                placeholder="Ex: Paris, Lyon, Marseille..." 
+                                required
+                                autocomplete="off"
+                                aria-describedby="city-help"
+                            >
+                            <small id="city-help">Saisissez le nom de votre commune</small>
+                        </div>
+
+                        <!-- Days Selection -->
+                        <div class="form-group">
+                            <label for="days-slider">
+                                <i class="fas fa-calendar-alt"></i>
+                                Nombre de jours de prévision: <span id="days-value">3</span>
+                            </label>
+                            <input 
+                                type="range" 
+                                id="days-slider" 
+                                min="1" 
+                                max="7" 
+                                value="3"
+                                class="slider"
+                                aria-describedby="days-help"
+                            >
+                            <small id="days-help">Choisissez entre 1 et 7 jours</small>
+                        </div>
+
+                        <!-- Additional Options -->
+                        <div class="form-group">
+                            <fieldset>
+                                <legend>
+                                    <i class="fas fa-cog"></i>
+                                    Informations supplémentaires
+                                </legend>
+                                <div class="checkbox-grid">
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" id="latitude" name="options" value="latitude">
+                                        <span class="checkmark"></span>
+                                        Latitude
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" id="longitude" name="options" value="longitude">
+                                        <span class="checkmark"></span>
+                                        Longitude
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" id="rain" name="options" value="rain">
+                                        <span class="checkmark"></span>
+                                        Cumul de pluie (mm)
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" id="wind" name="options" value="wind">
+                                        <span class="checkmark"></span>
+                                        Vent moyen (km/h)
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" id="wind-direction" name="options" value="wind-direction">
+                                        <span class="checkmark"></span>
+                                        Direction du vent (°)
+                                    </label>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-search"></i>
+                            Obtenir les prévisions
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="results-section" style="display: none;">
+                <div class="results-header">
+                    <h2 id="city-name">Prévisions pour</h2>
+                    <div class="location-info" id="location-info"></div>
+                </div>
+                <div class="weather-grid" id="weather-grid"></div>
+            </section>
+
+            <!-- Loading Spinner -->
+            <div class="loading" id="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Chargement des données météorologiques...</p>
+            </div>
+
+            <!-- Error Message -->
+            <div class="error-message" id="error-message" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p id="error-text"></p>
+            </div>
+        </main>
+
+        <!-- Dark Mode Toggle -->
+        <div class="dark-mode-toggle">
+            <button id="dark-mode-btn" aria-label="Basculer le mode sombre">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2025 Instant Weather V2 - Données fournies par Météo Concept API</p>
+                <div class="footer-links">
+                    <a href="#" aria-label="Code source sur GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
