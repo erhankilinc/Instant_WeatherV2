@@ -155,7 +155,7 @@ body {
 }
 
 /* Input Styles */
-input[type="text"] {
+input[type="text"], select {
   padding: 0.75rem 1rem;
   border: 2px solid var(--border-color);
   border-radius: var(--border-radius-sm);
@@ -165,14 +165,24 @@ input[type="text"] {
   transition: var(--transition);
 }
 
-input[type="text"]:focus {
+input[type="text"]:focus, select:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
 }
 
-input[type="text"]:hover {
+input[type="text"]:hover, select:hover {
   border-color: var(--primary-hover);
+}
+
+select {
+  cursor: pointer;
+}
+
+select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--background-color);
 }
 
 /* Slider Styles */
@@ -295,13 +305,19 @@ legend {
   margin-top: 1rem;
 }
 
-.submit-btn:hover {
+.submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: var(--card-shadow-hover);
 }
 
 .submit-btn:active {
   transform: translateY(0);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--secondary-color);
 }
 
 /* Small Text */
@@ -348,6 +364,7 @@ small {
   padding: 1.5rem;
   transition: var(--transition);
   border-left: 4px solid var(--primary-color);
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
 .weather-card:hover {
@@ -511,6 +528,17 @@ small {
   color: var(--primary-color);
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .header {
@@ -555,77 +583,5 @@ small {
     width: 50px;
     height: 50px;
     font-size: 1.2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .header {
-    padding: 1rem;
-  }
-  
-  .logo {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .logo h1 {
-    font-size: 1.8rem;
-  }
-  
-  .search-card {
-    padding: 1rem;
-  }
-  
-  .weather-card {
-    padding: 1rem;
-  }
-  
-  .weather-temp {
-    font-size: 2rem;
-  }
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.weather-card {
-  animation: fadeIn 0.5s ease-out forwards;
-}
-
-/* Accessibilité */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  
-  .spinner {
-    animation: none;
-  }
-}
-
-/* Focus styles pour l'accessibilité */
-button:focus,
-input:focus,
-.checkbox-item:focus-within {
-  outline: 2px solid var(--primary-color);
-  outline-offset: 2px;
-}
-
-/* High contrast pour l'accessibilité */
-@media (prefers-contrast: high) {
-  :root {
-    --card-shadow: 0 0 0 2px var(--border-color);
-    --card-shadow-hover: 0 0 0 3px var(--primary-color);
   }
 }

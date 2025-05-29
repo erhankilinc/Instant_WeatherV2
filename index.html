@@ -25,23 +25,37 @@
             <!-- Search Form -->
             <section class="search-section">
                 <div class="search-card">
-                    <h2>Rechercher une commune</h2>
+                    <h2><i class="fas fa-search"></i> Rechercher une commune</h2>
                     <form id="weather-form" class="weather-form">
-                        <!-- City Input -->
+                        <!-- Code Postal Input -->
                         <div class="form-group">
-                            <label for="city-input">
+                            <label for="code-postal">
                                 <i class="fas fa-map-marker-alt"></i>
-                                Nom de la commune
+                                Code postal (5 chiffres)
                             </label>
                             <input 
                                 type="text" 
-                                id="city-input" 
-                                placeholder="Ex: Paris, Lyon, Marseille..." 
+                                id="code-postal" 
+                                placeholder="Ex: 75001, 69000, 13000..." 
+                                maxlength="5"
+                                pattern="[0-9]{5}"
                                 required
-                                autocomplete="off"
-                                aria-describedby="city-help"
+                                autocomplete="postal-code"
+                                aria-describedby="postal-help"
                             >
-                            <small id="city-help">Saisissez le nom de votre commune</small>
+                            <small id="postal-help">Saisissez un code postal français valide</small>
+                        </div>
+
+                        <!-- Commune Selection -->
+                        <div class="form-group">
+                            <label for="commune-select">
+                                <i class="fas fa-city"></i>
+                                Sélectionnez votre commune
+                            </label>
+                            <select id="commune-select" disabled aria-describedby="commune-help">
+                                <option value="">-- Sélectionnez une commune --</option>
+                            </select>
+                            <small id="commune-help">La liste sera disponible après avoir saisi un code postal valide</small>
                         </div>
 
                         <!-- Days Selection -->
@@ -100,7 +114,7 @@
                         </div>
 
                         <!-- Submit Button -->
-                        <button type="submit" class="submit-btn">
+                        <button type="submit" id="submit-btn" class="submit-btn" disabled>
                             <i class="fas fa-search"></i>
                             Obtenir les prévisions
                         </button>
