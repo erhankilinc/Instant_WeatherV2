@@ -86,9 +86,23 @@ async function handleCodePostalInput() {
  * Récupération des communes par code postal
  */
 async function fetchCommunesByCodePostal(codePostal) {
-    const response = await fetch(`${API_CONFIG.GEO_API}?codePostal=${codePostal}`);
+    // Utiliser le format GeoJSON pour avoir les coordonnées du centre
+    const response = await fetch(`${API_CONFIG.GEO_API}?codePostal=${codePostal}&format=geojson&geometry=centre`);
     if (!response.ok) throw new Error("Erreur réseau");
-    return await response.json();
+    
+    const geoJsonData = await response.json();
+    console.log('Données GeoJSON reçues:', geoJsonData);
+    
+    // Convertir les features GeoJSON en format simple
+    const communes = geoJsonData.features?.map(feature => ({
+        code: feature.properties.code,
+        nom: feature.properties.nom,
+        codesPostaux: feature.properties.codesPostaux,
+        centre: feature.geometry // Ici on a les vraies coordonnées !
+    })) || [];
+    
+    console.log('Communes converties:', communes);
+    return communes;
 }
 
 /**
@@ -218,10 +232,165 @@ async function fetchMeteoByCommune(selectedCommune, numberOfDays = 1) {
 function displayResults(cityData, forecast, selectedOptions) {
     elements.cityName.textContent = `Prévisions pour ${cityData.nom}`;
     displayLocationInfo(cityData, selectedOptions);
+    
+    // Ajouter les cartes résumées (météo + localisation)
+    displaySummaryCards(cityData, forecast[0]);
+    
     generateWeatherCards(forecast, selectedOptions);
     
     elements.resultsSection.style.display = 'block';
     elements.resultsSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+/**
+ * Affichage des cartes résumées (météo + localisation)
+ */
+function displaySummaryCards(cityData, todayWeather) {
+    // Supprimer les anciennes cartes si elles existent
+    const existingSummary = document.getElementById('summary-container');
+    if (existingSummary) {
+        existingSummary.remove();
+    }
+    
+    // Créer le conteneur pour les deux cartes
+    const summaryContainer = document.createElement('div');
+    summaryContainer.id = 'summary-container';
+    summaryContainer.className = 'summary-container';
+    
+    // Carte météo
+    const weatherCard = createWeatherSummaryCard(todayWeather);
+    
+    // Carte de localisation
+    const locationCard = createLocationCard(cityData);
+    
+    summaryContainer.appendChild(weatherCard);
+    summaryContainer.appendChild(locationCard);
+    
+    // Insérer le conteneur après les informations de localisation
+    elements.locationInfo.parentNode.insertBefore(summaryContainer, elements.locationInfo.nextSibling);
+}
+
+/**
+ * Création de la carte météo résumée
+ */
+function createWeatherSummaryCard(todayWeather) {
+    const weatherCard = document.createElement('div');
+    weatherCard.className = 'weather-summary-card';
+    
+    const weatherIcon = getWeatherIcon(todayWeather.weather);
+    const weatherDescription = getWeatherDescription(todayWeather.weather);
+    
+    weatherCard.innerHTML = `
+        <div class="summary-content">
+            <div class="summary-icon">
+                <i class="${weatherIcon}"></i>
+            </div>
+            <div class="summary-info">
+                <div class="summary-temp">${Math.round(todayWeather.tmax)}°C</div>
+                <div class="summary-description">${weatherDescription}</div>
+                <div class="summary-details">
+                    Min: ${Math.round(todayWeather.tmin)}°C • Pluie: ${todayWeather.probarain || 0}%
+                </div>
+            </div>
+        </div>
+    `;
+    
+    return weatherCard;
+}
+
+/**
+ * Création de la carte de localisation
+ */
+function createLocationCard(cityData) {
+    const locationCard = document.createElement('div');
+    locationCard.className = 'location-summary-card';
+    
+    // Extraire les coordonnées au format GeoJSON
+    let latitude = null;
+    let longitude = null;
+    
+    if (cityData.centre && cityData.centre.coordinates && cityData.centre.coordinates.length >= 2) {
+        longitude = cityData.centre.coordinates[0]; // Premier élément = longitude
+        latitude = cityData.centre.coordinates[1];  // Deuxième élément = latitude
+    }
+    
+    console.log('Coordonnées extraites:', { latitude, longitude, cityData: cityData.centre });
+    
+    // Déterminer la région/département
+    const codePostal = cityData.codesPostaux?.[0] || '';
+    const departement = getDepartementFromCodePostal(codePostal);
+    
+    locationCard.innerHTML = `
+        <div class="location-content">
+            <div class="location-icon">
+                <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="location-info-card">
+                <div class="location-name">${cityData.nom}</div>
+                <div class="location-department">${departement}</div>
+                <div class="location-coordinates">
+                    ${latitude !== null && longitude !== null ? 
+                        `${latitude.toFixed(2)}°N, ${longitude.toFixed(2)}°E` : 
+                        'Coordonnées non disponibles'
+                    }
+                </div>
+            </div>
+            ${latitude !== null && longitude !== null ? 
+                `<div class="mini-map" onclick="openMap(${latitude}, ${longitude}, '${cityData.nom}')">
+                    <i class="fas fa-external-link-alt"></i>
+                    <span>Voir sur la carte</span>
+                </div>` : 
+                '<div class="mini-map-disabled">Carte non disponible</div>'
+            }
+        </div>
+    `;
+    
+    return locationCard;
+}
+
+/**
+ * Obtenir le département à partir du code postal
+ */
+function getDepartementFromCodePostal(codePostal) {
+    if (!codePostal) return 'France';
+    
+    const departements = {
+        '01': 'Ain', '02': 'Aisne', '03': 'Allier', '04': 'Alpes-de-Haute-Provence',
+        '05': 'Hautes-Alpes', '06': 'Alpes-Maritimes', '07': 'Ardèche', '08': 'Ardennes',
+        '09': 'Ariège', '10': 'Aube', '11': 'Aude', '12': 'Aveyron',
+        '13': 'Bouches-du-Rhône', '14': 'Calvados', '15': 'Cantal', '16': 'Charente',
+        '17': 'Charente-Maritime', '18': 'Cher', '19': 'Corrèze', '21': 'Côte-d\'Or',
+        '22': 'Côtes-d\'Armor', '23': 'Creuse', '24': 'Dordogne', '25': 'Doubs',
+        '26': 'Drôme', '27': 'Eure', '28': 'Eure-et-Loir', '29': 'Finistère',
+        '30': 'Gard', '31': 'Haute-Garonne', '32': 'Gers', '33': 'Gironde',
+        '34': 'Hérault', '35': 'Ille-et-Vilaine', '36': 'Indre', '37': 'Indre-et-Loire',
+        '38': 'Isère', '39': 'Jura', '40': 'Landes', '41': 'Loir-et-Cher',
+        '42': 'Loire', '43': 'Haute-Loire', '44': 'Loire-Atlantique', '45': 'Loiret',
+        '46': 'Lot', '47': 'Lot-et-Garonne', '48': 'Lozère', '49': 'Maine-et-Loire',
+        '50': 'Manche', '51': 'Marne', '52': 'Haute-Marne', '53': 'Mayenne',
+        '54': 'Meurthe-et-Moselle', '55': 'Meuse', '56': 'Morbihan', '57': 'Moselle',
+        '58': 'Nièvre', '59': 'Nord', '60': 'Oise', '61': 'Orne',
+        '62': 'Pas-de-Calais', '63': 'Puy-de-Dôme', '64': 'Pyrénées-Atlantiques', '65': 'Hautes-Pyrénées',
+        '66': 'Pyrénées-Orientales', '67': 'Bas-Rhin', '68': 'Haut-Rhin', '69': 'Rhône',
+        '70': 'Haute-Saône', '71': 'Saône-et-Loire', '72': 'Sarthe', '73': 'Savoie',
+        '74': 'Haute-Savoie', '75': 'Paris', '76': 'Seine-Maritime', '77': 'Seine-et-Marne',
+        '78': 'Yvelines', '79': 'Deux-Sèvres', '80': 'Somme', '81': 'Tarn',
+        '82': 'Tarn-et-Garonne', '83': 'Var', '84': 'Vaucluse', '85': 'Vendée',
+        '86': 'Vienne', '87': 'Haute-Vienne', '88': 'Vosges', '89': 'Yonne',
+        '90': 'Territoire de Belfort', '91': 'Essonne', '92': 'Hauts-de-Seine', '93': 'Seine-Saint-Denis',
+        '94': 'Val-de-Marne', '95': 'Val-d\'Oise'
+    };
+    
+    const deptCode = codePostal.substring(0, 2);
+    return departements[deptCode] || 'France';
+}
+
+/**
+ * Ouvrir la carte dans un nouvel onglet
+ */
+function openMap(latitude, longitude, cityName) {
+    const url = `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}&zoom=12&layers=M`;
+    window.open(url, '_blank');
 }
 
 /**
@@ -235,35 +404,29 @@ function displayLocationInfo(cityData, selectedOptions) {
         locationHTML += ` (${cityData.codesPostaux[0]})`;
     }
     
-    // Gérer les coordonnées de manière sécurisée
-    if (selectedOptions.includes('latitude')) {
-        let latitude = 'Non disponible';
-        
-        // Essayer différentes structures possibles pour la latitude
-        if (cityData.centre && cityData.centre.coordinates && cityData.centre.coordinates[1]) {
-            latitude = cityData.centre.coordinates[1].toFixed(4) + '°';
-        } else if (cityData.latitude) {
-            latitude = parseFloat(cityData.latitude).toFixed(4) + '°';
-        } else if (cityData.lat) {
-            latitude = parseFloat(cityData.lat).toFixed(4) + '°';
-        }
-        
-        locationHTML += ` • Latitude: ${latitude}`;
+    // Debug pour voir la structure des données
+    console.log('Données de la commune pour coordonnées:', cityData);
+    
+    // Extraire les coordonnées - l'API geo.api.gouv.fr utilise le format GeoJSON
+    let latitude = null;
+    let longitude = null;
+    
+    if (cityData.centre && cityData.centre.coordinates) {
+        // Format GeoJSON: [longitude, latitude]
+        longitude = cityData.centre.coordinates[0];
+        latitude = cityData.centre.coordinates[1];
     }
     
+    // Afficher la latitude si demandée
+    if (selectedOptions.includes('latitude')) {
+        const latitudeText = latitude !== null ? latitude.toFixed(4) + '°' : 'Non disponible';
+        locationHTML += ` • Latitude: ${latitudeText}`;
+    }
+    
+    // Afficher la longitude si demandée
     if (selectedOptions.includes('longitude')) {
-        let longitude = 'Non disponible';
-        
-        // Essayer différentes structures possibles pour la longitude
-        if (cityData.centre && cityData.centre.coordinates && cityData.centre.coordinates[0]) {
-            longitude = cityData.centre.coordinates[0].toFixed(4) + '°';
-        } else if (cityData.longitude) {
-            longitude = parseFloat(cityData.longitude).toFixed(4) + '°';
-        } else if (cityData.lon) {
-            longitude = parseFloat(cityData.lon).toFixed(4) + '°';
-        }
-        
-        locationHTML += ` • Longitude: ${longitude}`;
+        const longitudeText = longitude !== null ? longitude.toFixed(4) + '°' : 'Non disponible';
+        locationHTML += ` • Longitude: ${longitudeText}`;
     }
     
     elements.locationInfo.innerHTML = locationHTML;

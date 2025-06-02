@@ -350,7 +350,282 @@ small {
   display: inline-block;
 }
 
-/* Weather Grid */
+/* Summary Cards Container */
+.summary-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin: 1.5rem auto;
+  max-width: 800px;
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Weather Summary Card */
+.weather-summary-card {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  color: white;
+  box-shadow: var(--card-shadow-hover);
+  transition: var(--transition);
+}
+
+.weather-summary-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 25px -5px rgb(0 0 0 / 0.2);
+}
+
+.summary-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.summary-icon {
+  font-size: 3rem;
+  color: #fbbf24;
+  flex-shrink: 0;
+}
+
+.summary-info {
+  flex: 1;
+}
+
+.summary-temp {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: white;
+}
+
+.summary-description {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  opacity: 0.9;
+}
+
+.summary-details {
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+/* Location Summary Card */
+.location-summary-card {
+  background: linear-gradient(135deg, var(--success-color), #059669);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  color: white;
+  box-shadow: var(--card-shadow-hover);
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.location-summary-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 25px -5px rgb(0 0 0 / 0.2);
+}
+
+.location-content {
+  display: flex;
+  gap: 1rem;
+  height: 100%;
+  min-height: 140px;
+}
+
+.location-info-side {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.location-icon {
+  font-size: 2.5rem;
+  color: #fbbf24;
+  flex-shrink: 0;
+}
+
+.location-info-card {
+  flex: 1;
+  min-width: 0;
+}
+
+.location-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.location-department {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin-bottom: 0.5rem;
+}
+
+.location-coordinates {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  font-family: monospace;
+}
+
+/* Mini-carte Leaflet intégrée */
+.mini-map-container {
+  width: 140px;
+  height: 120px;
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.mini-map-leaflet {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  border-radius: calc(var(--border-radius-sm) - 2px);
+}
+
+.mini-map-leaflet:hover {
+  filter: brightness(1.1);
+}
+
+/* Style pour les popups Leaflet */
+.leaflet-popup-content-wrapper {
+  background: var(--surface-color);
+  color: var(--text-primary);
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--card-shadow);
+}
+
+.leaflet-popup-content {
+  margin: 8px 12px;
+  line-height: 1.4;
+  font-size: 0.9rem;
+}
+
+.leaflet-popup-tip {
+  background: var(--surface-color);
+}
+
+/* Ancien style du bouton (fallback) */
+.mini-map {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-sm);
+  padding: 0.75rem;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  min-width: 80px;
+}
+
+.mini-map:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.mini-map i {
+  display: block;
+  font-size: 1.2rem;
+  margin-bottom: 0.25rem;
+}
+
+.mini-map span {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.mini-map-disabled {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-sm);
+  padding: 0.75rem;
+  text-align: center;
+  opacity: 0.6;
+  font-size: 0.75rem;
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+/* Dark mode pour les cartes résumées */
+[data-theme="dark"] .weather-summary-card {
+  background: linear-gradient(135deg, var(--primary-color), #1e40af);
+}
+
+[data-theme="dark"] .location-summary-card {
+  background: linear-gradient(135deg, #047857, #065f46);
+}
+
+/* Responsive pour les cartes résumées */
+@media (max-width: 768px) {
+  .summary-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 1rem auto;
+  }
+  
+  .summary-content, .location-content {
+    gap: 1rem;
+  }
+  
+  .summary-temp {
+    font-size: 2rem;
+  }
+  
+  .summary-icon, .location-icon {
+    font-size: 2.5rem;
+  }
+  
+  .location-name {
+    font-size: 1.2rem;
+  }
+  
+  /* Ajustements pour la mini-carte sur mobile */
+  .location-content {
+    flex-direction: column;
+    min-height: auto;
+  }
+  
+  .location-info-side {
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .mini-map-container {
+    width: 100%;
+    height: 150px;
+    align-self: stretch;
+  }
+  
+  .mini-map {
+    padding: 0.5rem;
+    min-width: 70px;
+  }
+  
+  .mini-map span {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .location-info-side {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
+  .location-icon {
+    font-size: 2rem;
+  }
+  
+  .mini-map-container {
+    height: 120px;
+  }
+}
 .weather-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
