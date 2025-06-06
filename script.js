@@ -299,7 +299,7 @@ function createWeatherSummaryCard(todayWeather) {
 }
 
 /**
- * Création de la carte de localisation
+ * Création de la carte de localisation AVEC MINI-CARTE INTÉGRÉE
  */
 function createLocationCard(cityData) {
     const locationCard = document.createElement('div');
@@ -316,36 +316,92 @@ function createLocationCard(cityData) {
     
     console.log('Coordonnées extraites:', { latitude, longitude, cityData: cityData.centre });
     
-    // Déterminer la région/département
-    const codePostal = cityData.codesPostaux?.[0] || '';
-    const departement = getDepartementFromCodePostal(codePostal);
+    // Créer un ID unique pour cette carte
+    const mapId = `map-${cityData.code}-${Date.now()}`;
     
     locationCard.innerHTML = `
         <div class="location-content">
-            <div class="location-icon">
-                <i class="fas fa-map-marker-alt"></i>
-            </div>
-            <div class="location-info-card">
-                <div class="location-name">${cityData.nom}</div>
-                <div class="location-department">${departement}</div>
-                <div class="location-coordinates">
-                    ${latitude !== null && longitude !== null ? 
-                        `${latitude.toFixed(2)}°N, ${longitude.toFixed(2)}°E` : 
-                        'Coordonnées non disponibles'
-                    }
+            <div class="location-info-side">
+                <div class="location-icon">
+                    <i class="fas fa-map-marker-alt"></i>
                 </div>
             </div>
             ${latitude !== null && longitude !== null ? 
-                `<div class="mini-map" onclick="openMap(${latitude}, ${longitude}, '${cityData.nom}')">
-                    <i class="fas fa-external-link-alt"></i>
-                    <span>Voir sur la carte</span>
+                `<div class="mini-map-container" style="width: 300px; height: 200px;">
+                    <div id="${mapId}" class="mini-map-leaflet"></div>
                 </div>` : 
                 '<div class="mini-map-disabled">Carte non disponible</div>'
             }
         </div>
     `;
     
+    // Initialiser la carte après l'insertion dans le DOM
+    setTimeout(() => {
+        if (latitude !== null && longitude !== null) {
+            initMiniMap(mapId, latitude, longitude, cityData.nom);
+        }
+    }, 100);
+    
     return locationCard;
+}
+
+/**
+ * Initialisation de la mini-carte Leaflet
+ */
+function initMiniMap(mapId, latitude, longitude, cityName) {
+    try {
+        // Vérifier que l'élément existe
+        const mapElement = document.getElementById(mapId);
+        if (!mapElement) {
+            console.error('Élément de carte non trouvé:', mapId);
+            return;
+        }
+
+        console.log('Initialisation de la carte:', mapId, 'Coordonnées:', latitude, longitude);
+
+        // Créer la carte avec Leaflet - Navigation activée
+        const map = L.map(mapId, {
+            center: [latitude, longitude],
+            zoom: 13,
+            zoomControl: true,
+            attributionControl: true,
+            scrollWheelZoom: true,
+            doubleClickZoom: true,
+            boxZoom: true,
+            keyboard: true,
+            dragging: true
+        });
+
+        // Ajouter les tuiles OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // Ajouter un marqueur avec popup contenant les coordonnées
+        const marker = L.marker([latitude, longitude]).addTo(map);
+        const coordsText = `${latitude.toFixed(4)}°N, ${longitude.toFixed(4)}°E`;
+        marker.bindPopup(`
+            <div style="text-align: center; font-family: Arial, sans-serif;">
+                <strong style="color: #2563eb; font-size: 14px;">${cityName}</strong><br>
+                <span style="color: #64748b; font-size: 12px; font-family: monospace;">${coordsText}</span><br>
+                <small style="color: #94a3b8; font-size: 10px;">Naviguez sur la carte avec la souris</small>
+            </div>
+        `).openPopup();
+
+        console.log('Mini-carte initialisée avec succès:', mapId);
+        
+    } catch (error) {
+        console.error('Erreur lors de l\'initialisation de la carte:', error);
+    }
+}
+
+/**
+ * Ouvrir la carte en plein écran dans un nouvel onglet
+ */
+function openFullMap(latitude, longitude, cityName) {
+    const url = `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}&zoom=15&layers=M`;
+    window.open(url, '_blank');
 }
 
 /**
@@ -383,14 +439,6 @@ function getDepartementFromCodePostal(codePostal) {
     
     const deptCode = codePostal.substring(0, 2);
     return departements[deptCode] || 'France';
-}
-
-/**
- * Ouvrir la carte dans un nouvel onglet
- */
-function openMap(latitude, longitude, cityName) {
-    const url = `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}&zoom=12&layers=M`;
-    window.open(url, '_blank');
 }
 
 /**
