@@ -34,10 +34,9 @@ Pour exécuter ce projet localement, suivez les étapes ci-dessous :
 
 1.  **Cloner le dépôt :**
     ```bash
-    git clone [URL_DE_VOTRE_DEPOT]
+    git clone (https://github.com/erhankilinc)
     cd INSTANTWeatherV2
     ```
-    (Remplacez `[URL_DE_VOTRE_DEPOT]` par l'URL réelle de votre dépôt GitHub.)
 
 2.  **Obtenir une clé API Météo Concept :**
     Ce projet utilise l'API Météo Concept. Vous devrez obtenir votre propre token API personnel depuis leur site web.
@@ -65,3 +64,4 @@ Pour exécuter ce projet localement, suivez les étapes ci-dessous :
 6.  **Mode Sombre :** Utilisez l'icône de lune/soleil en haut à droite pour basculer le thème de l'interface.
 
 ## Structure du Projet
+`(https://erhankilinc.github.io/Instant_WeatherV2/)`

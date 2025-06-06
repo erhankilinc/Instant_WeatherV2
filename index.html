@@ -11,7 +11,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- SIDEBAR FIXE - Zone de contrôle -->
         <aside class="weather-sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-logo">
@@ -22,7 +21,6 @@
             </div>
 
             <form id="weather-form" class="sidebar-form">
-                <!-- Code postal -->
                 <div class="form-section">
                     <label for="code-postal">Code postal</label>
                     <input 
@@ -35,7 +33,6 @@
                     >
                 </div>
 
-                <!-- Commune -->
                 <div class="form-section">
                     <label for="commune-select">Commune</label>
                     <select id="commune-select" disabled>
@@ -43,7 +40,6 @@
                     </select>
                 </div>
 
-                <!-- Contrôle des jours -->
                 <div class="form-section">
                     <label>Période de prévision</label>
                     <div class="days-control">
@@ -62,34 +58,28 @@
                     </div>
                 </div>
 
-                <!-- Options -->
                 <div class="form-section">
                     <label>Données supplémentaires</label>
                     <div class="options-list">
                         <label class="option-item">
                             <input type="checkbox" id="latitude" name="options" value="latitude">
-                            <div class="option-checkbox"></div>
-                            <span class="option-label">Latitude</span>
+                            <span class="option-checkbox"></span> <span class="option-label">Latitude</span>
                         </label>
                         <label class="option-item">
                             <input type="checkbox" id="longitude" name="options" value="longitude">
-                            <div class="option-checkbox"></div>
-                            <span class="option-label">Longitude</span>
+                            <span class="option-checkbox"></span> <span class="option-label">Longitude</span>
                         </label>
                         <label class="option-item">
                             <input type="checkbox" id="rain" name="options" value="rain">
-                            <div class="option-checkbox"></div>
-                            <span class="option-label">Précipitations</span>
+                            <span class="option-checkbox"></span> <span class="option-label">Précipitations</span>
                         </label>
                         <label class="option-item">
                             <input type="checkbox" id="wind" name="options" value="wind">
-                            <div class="option-checkbox"></div>
-                            <span class="option-label">Vent</span>
+                            <span class="option-checkbox"></span> <span class="option-label">Vent</span>
                         </label>
                         <label class="option-item">
                             <input type="checkbox" id="wind-direction" name="options" value="wind-direction">
-                            <div class="option-checkbox"></div>
-                            <span class="option-label">Direction vent</span>
+                            <span class="option-checkbox"></span> <span class="option-label">Direction vent</span>
                         </label>
                     </div>
                 </div>
@@ -101,7 +91,6 @@
             </form>
         </aside>
 
-        <!-- HEADER - Barre de titre -->
         <header class="header">
             <div class="header-content">
                 <h1 class="header-title">Tableau de bord météorologique</h1>
@@ -113,27 +102,21 @@
             </div>
         </header>
 
-        <!-- MAIN - Contenu principal en bento box -->
         <main class="main-content">
-            <!-- Barre de statut -->
             <div class="status-bar" id="status-bar">
                 Prêt pour l'analyse météorologique
             </div>
 
-            <!-- Zone de chargement -->
             <div class="loading-state" id="loading" style="display: none;">
                 <div class="loading-spinner"></div>
                 <p class="loading-text">Analyse des données en cours...</p>
             </div>
 
-            <!-- Zone d'erreur -->
             <div class="error-state" id="error-message" style="display: none;">
                 <p class="error-text" id="error-text"></p>
             </div>
 
-            <!-- Grille Bento des résultats -->
             <div class="weather-bento" id="weather-bento" style="display: none;">
-                <!-- Carte météo principale (2x2) -->
                 <div class="main-weather-card" id="main-weather-card">
                     <div class="current-temp" id="current-temp">--°</div>
                     <div class="current-condition" id="current-condition">--</div>
@@ -157,26 +140,22 @@
                     </div>
                 </div>
 
-                <!-- Carte de localisation (2x1) -->
                 <div class="location-card" id="location-card">
                     <div class="location-header">
                         <div class="location-title" id="location-title">Localisation</div>
                         <div class="location-coords" id="location-coords">-- , --</div>
                     </div>
                     <div class="location-map" id="location-map">
-                        <!-- La carte Leaflet sera insérée ici -->
-                    </div>
+                        </div>
                 </div>
 
-                <!-- Cartes métriques individuelles (1x1 chacune) -->
                 <div class="metric-card" id="wind-card" style="display: none;">
                     <div class="metric-header">
                         <span class="metric-label">Vent</span>
                         <i class="fas fa-wind metric-icon"></i>
                     </div>
                     <div class="metric-value" id="wind-speed">-- km/h</div>
-                    <div class="metric-subtitle" id="wind-direction">--</div>
-                </div>
+                    <div class="metric-subtitle" id="wind-direction-display">--</div> </div>
 
                 <div class="metric-card" id="rain-card" style="display: none;">
                     <div class="metric-header">
@@ -197,22 +176,19 @@
                 </div>
             </div>
 
-            <!-- Grille de prévisions en cartes (pleine largeur) -->
             <div class="forecast-cards" id="forecast-cards" style="display: none;">
                 <div class="forecast-header">
                     <h2 class="forecast-title">Prévisions détaillées</h2>
                     <p class="forecast-subtitle">Evolution météorologique sur la période sélectionnée</p>
                 </div>
                 <div class="forecast-grid" id="forecast-grid">
-                    <!-- Les cartes de prévision seront générées ici -->
-                </div>
+                    </div>
             </div>
         </main>
 
-        <!-- FOOTER - Information -->
         <footer class="footer">
             <div class="footer-content">
-                <p>&copy; 2025 WeatherGrid - Interface modulaire - KILINC Erhan </p>
+                <p>&copy; 2025 WeatherGrid - Interface modulaire</p>
                 <p>Données: Météo Concept API</p>
             </div>
         </footer>
