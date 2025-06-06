@@ -1,8 +1,3 @@
-/* =================================
-   WEATHERGRID - APPROCHE RÉVOLUTIONNAIRE
-   Layout: Bento Box + Timeline Verticale
-   ================================= */
-
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
@@ -43,21 +38,21 @@
   --space-20: 5rem;
   --space-24: 6rem;
   
-  /* Rayons cohérents */
+  /* Rayons cohérents pour les bordures arrondies */
   --radius-sm: 0.375rem;
   --radius: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
   
-  /* Ombres subtiles */
+  /* Ombres subtiles pour la profondeur */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
-/* Mode sombre élégant */
+/* Mode sombre élégant - inversion des couleurs principales */
 [data-theme="dark"] {
   --blanc: #0a0a0a;
   --noir: #ffffff;
@@ -74,54 +69,54 @@
 }
 
 /* =================================
-   RESET MINIMAL
-   ================================= */
+    RESET MINIMAL
+    ================================= */
 
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  box-sizing: border-box; /* Inclut le padding et la bordure dans la largeur/hauteur */
+  margin: 0; /* Supprime les marges par défaut */
+  padding: 0; /* Supprime les paddings par défaut */
 }
 
 body {
-  font-family: var(--font-primary);
+  font-family: var(--font-primary); /* Utilise la police principale définie dans les variables CSS */
   font-size: 16px;
   line-height: 1.5;
-  color: var(--noir);
-  background-color: var(--blanc);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  color: var(--noir); /* Couleur du texte par défaut */
+  background-color: var(--blanc); /* Couleur de fond par défaut */
+  -webkit-font-smoothing: antialiased; /* Lissage des polices pour WebKit */
+  -moz-osx-font-smoothing: grayscale; /* Lissage des polices pour Firefox (macOS) */
 }
 
 /* =================================
-   LAYOUT BENTO BOX RÉVOLUTIONNAIRE
-   ================================= */
+    LAYOUT BENTO BOX RÉVOLUTIONNAIRE
+    ================================= */
 
 .container {
-  min-height: 100vh;
+  min-height: 100vh; /* La hauteur minimale est de 100% de la hauteur de la fenêtre */
   display: grid;
-  grid-template-columns: 300px 1fr;
-  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 300px 1fr; /* Colonne fixe pour la sidebar, le reste pour le contenu principal */
+  grid-template-rows: auto 1fr auto; /* Hauteur auto pour l'en-tête et le pied de page, le reste pour le contenu principal */
   grid-template-areas: 
     "sidebar header"
     "sidebar main"
-    "sidebar footer";
+    "sidebar footer"; /* Définition des zones de la grille */
 }
 
 /* =================================
-   SIDEBAR NAVIGATION FIXE
-   ================================= */
+    SIDEBAR NAVIGATION FIXE
+    ================================= */
 
 .weather-sidebar {
-  grid-area: sidebar;
+  grid-area: sidebar; /* Place la sidebar dans la zone 'sidebar' de la grille */
   background: var(--gris-50);
-  border-right: 1px solid var(--gris-200);
+  border-right: 1px solid var(--gris-200); /* Bordure droite pour la séparation */
   padding: var(--space-8);
-  position: fixed;
-  height: 100vh;
+  position: fixed; /* Rend la sidebar fixe lors du défilement */
+  height: 100vh; /* Prend toute la hauteur de la fenêtre */
   width: 300px;
-  overflow-y: auto;
-  z-index: 100;
+  overflow-y: auto; /* Ajoute une barre de défilement si le contenu dépasse */
+  z-index: 100; /* Assure que la sidebar est au-dessus des autres éléments */
 }
 
 .sidebar-header {
@@ -153,8 +148,8 @@ body {
 }
 
 /* =================================
-   FORMULAIRE SIDEBAR COMPACT
-   ================================= */
+    FORMULAIRE SIDEBAR COMPACT
+    ================================= */
 
 .sidebar-form {
   display: flex;
@@ -182,13 +177,13 @@ body {
   font-size: 0.875rem;
   background: var(--blanc);
   color: var(--noir);
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease; /* Transition douce pour l'effet de focus */
 }
 
 .form-section input:focus,
 .form-section select:focus {
-  outline: none;
-  border-color: var(--bleu);
+  outline: none; /* Supprime l'outline par défaut au focus */
+  border-color: var(--bleu); /* Change la couleur de la bordure au focus */
 }
 
 .form-section select {
@@ -218,7 +213,7 @@ body {
 .days-value {
   font-weight: 600;
   color: var(--bleu);
-  font-family: var(--font-mono);
+  font-family: var(--font-mono); /* Utilise la police mono pour les valeurs numériques */
 }
 
 .days-slider {
@@ -231,7 +226,7 @@ body {
 }
 
 .days-slider::-webkit-slider-thumb {
-  appearance: none;
+  appearance: none; /* Cache le style par défaut du curseur */
   width: 16px;
   height: 16px;
   background: var(--bleu);
@@ -241,10 +236,10 @@ body {
 }
 
 .days-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
+  transform: scale(1.2); /* Agrandit le curseur au survol */
 }
 
-/* Options en liste */
+/* Options en liste (checkboxes) */
 .options-list {
   display: flex;
   flex-direction: column;
@@ -278,7 +273,7 @@ body {
 }
 
 .option-item input[type="checkbox"] {
-  display: none;
+  display: none; /* Cache la checkbox native */
 }
 
 .option-item input[type="checkbox"]:checked + .option-checkbox {
@@ -287,7 +282,7 @@ body {
 }
 
 .option-item input[type="checkbox"]:checked + .option-checkbox::after {
-  content: '✓';
+  content: '✓'; /* Ajoute un coche stylisé */
   color: white;
   font-size: 0.75rem;
   font-weight: bold;
@@ -315,7 +310,7 @@ body {
 }
 
 .search-button:hover:not(:disabled) {
-  background: #2563eb;
+  background: #2563eb; /* Assombrit le bouton au survol */
 }
 
 .search-button:disabled {
@@ -324,11 +319,11 @@ body {
 }
 
 /* =================================
-   HEADER BENTO
-   ================================= */
+    HEADER BENTO
+    ================================= */
 
 .header {
-  grid-area: header;
+  grid-area: header; /* Place l'en-tête dans la zone 'header' de la grille */
   padding: var(--space-8) var(--space-8) var(--space-4);
   border-bottom: 1px solid var(--gris-200);
   background: var(--blanc);
@@ -371,11 +366,11 @@ body {
 }
 
 /* =================================
-   MAIN CONTENT - BENTO GRID
-   ================================= */
+    MAIN CONTENT - BENTO GRID
+    ================================= */
 
 .main-content {
-  grid-area: main;
+  grid-area: main; /* Place le contenu principal dans la zone 'main' de la grille */
   padding: var(--space-4) var(--space-8);
   background: var(--blanc);
 }
@@ -395,16 +390,16 @@ body {
 /* Bento grid pour les résultats */
 .weather-bento {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(3, auto);
-  gap: var(--space-4);
-  max-width: 1200px;
+  grid-template-columns: repeat(4, 1fr); /* 4 colonnes de taille égale */
+  grid-template-rows: repeat(3, auto); /* 3 lignes de hauteur automatique */
+  gap: var(--space-4); /* Espacement entre les éléments de la grille */
+  max-width: 1200px; /* Limite la largeur de la grille */
 }
 
 /* Carte principale (2x2) */
 .main-weather-card {
-  grid-column: span 2;
-  grid-row: span 2;
+  grid-column: span 2; /* S'étend sur 2 colonnes */
+  grid-row: span 2; /* S'étend sur 2 lignes */
   background: var(--gris-50);
   border: 1px solid var(--gris-200);
   border-radius: var(--radius-lg);
@@ -434,7 +429,7 @@ body {
 
 .current-details {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr; /* Deux colonnes égales pour les détails */
   gap: var(--space-4);
   width: 100%;
 }
@@ -460,7 +455,7 @@ body {
 
 /* Carte localisation */
 .location-card {
-  grid-column: span 2;
+  grid-column: span 2; /* S'étend sur 2 colonnes */
   background: var(--gris-50);
   border: 1px solid var(--gris-200);
   border-radius: var(--radius-lg);
@@ -489,7 +484,7 @@ body {
 }
 
 .location-map {
-  flex: 1;
+  flex: 1; /* Permet à la carte de prendre l'espace disponible */
   border-radius: var(--radius);
   overflow: hidden;
   border: 1px solid var(--gris-200);
@@ -547,11 +542,11 @@ body {
 }
 
 /* =================================
-   GRILLE DE PRÉVISIONS - CARDS MODERNES
-   ================================= */
+    GRILLE DE PRÉVISIONS - CARDS MODERNES
+    ================================= */
 
 .forecast-cards {
-  grid-column: span 4;
+  grid-column: span 4; /* S'étend sur toutes les colonnes de la grille principale */
   background: var(--blanc);
   border: 1px solid var(--gris-200);
   border-radius: var(--radius-lg);
@@ -577,7 +572,7 @@ body {
 
 .forecast-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Grille adaptative pour les cartes de prévision */
   gap: var(--space-4);
 }
 
@@ -586,14 +581,14 @@ body {
   border: 1px solid var(--gris-200);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
-  transition: all 0.2s ease;
+  transition: all 0.2s ease; /* Transition pour les effets de survol */
   position: relative;
   overflow: hidden;
 }
 
 .forecast-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px); /* Léger déplacement vers le haut au survol */
+  box-shadow: var(--shadow-lg); /* Ombre plus prononcée au survol */
   border-color: var(--gris-300);
 }
 
@@ -610,7 +605,7 @@ body {
 }
 
 .forecast-card:hover::before {
-  opacity: 1;
+  opacity: 1; /* Affiche la ligne supérieure au survol */
 }
 
 .forecast-card-header {
@@ -662,7 +657,7 @@ body {
 
 .forecast-details {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr; /* Deux colonnes pour les détails de prévision */
   gap: var(--space-3);
 }
 
@@ -690,8 +685,8 @@ body {
 
 /* Badge pour le jour actuel */
 .forecast-card.current-day {
-  background: linear-gradient(135deg, var(--bleu), #2563eb);
-  color: white;
+  background: linear-gradient(135deg, var(--bleu), #2563eb); /* Dégradé de couleur pour le jour actuel */
+  color: white; /* Texte blanc pour un meilleur contraste */
   border-color: var(--bleu);
 }
 
@@ -719,7 +714,7 @@ body {
 }
 
 .forecast-card.current-day:hover {
-  transform: translateY(-4px) scale(1.02);
+  transform: translateY(-4px) scale(1.02); /* Effet de survol plus prononcé pour le jour actuel */
   box-shadow: var(--shadow-xl);
 }
 
@@ -745,17 +740,17 @@ body {
   }
   
   .forecast-cards {
-    grid-column: span 3;
+    grid-column: span 3; /* S'étend sur 3 colonnes à partir de cette taille */
   }
 }
 
 @media (max-width: 768px) {
   .forecast-cards {
-    grid-column: span 1;
+    grid-column: span 1; /* S'étend sur 1 colonne à partir de cette taille (pleine largeur) */
   }
   
   .forecast-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Une seule colonne pour les prévisions sur mobile */
   }
   
   .forecast-card {
@@ -773,8 +768,8 @@ body {
 }
 
 /* =================================
-   ÉTATS ET FEEDBACK
-   ================================= */
+    ÉTATS ET FEEDBACK
+    ================================= */
 
 .loading-state {
   display: flex;
@@ -791,7 +786,7 @@ body {
   border: 2px solid var(--gris-200);
   border-top: 2px solid var(--bleu);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite; /* Animation de rotation pour le spinner */
   margin-bottom: var(--space-4);
 }
 
@@ -806,8 +801,8 @@ body {
 }
 
 .error-state {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: #fef2f2; /* Couleur de fond pour les messages d'erreur */
+  border: 1px solid #fecaca; /* Bordure rouge clair */
   border-radius: var(--radius);
   padding: var(--space-4);
   margin: var(--space-4) 0;
@@ -815,15 +810,15 @@ body {
 
 .error-text {
   font-size: 0.875rem;
-  color: #dc2626;
+  color: #dc2626; /* Couleur de texte rouge foncé pour les erreurs */
 }
 
 /* =================================
-   FOOTER MINIMAL
-   ================================= */
+    FOOTER MINIMAL
+    ================================= */
 
 .footer {
-  grid-area: footer;
+  grid-area: footer; /* Place le pied de page dans la zone 'footer' de la grille */
   padding: var(--space-4) var(--space-8);
   border-top: 1px solid var(--gris-200);
   background: var(--gris-50);
@@ -838,12 +833,12 @@ body {
 }
 
 /* =================================
-   RESPONSIVE DESIGN
-   ================================= */
+    RESPONSIVE DESIGN
+    ================================= */
 
 @media (max-width: 1024px) {
   .container {
-    grid-template-columns: 280px 1fr;
+    grid-template-columns: 280px 1fr; /* Ajuste la largeur de la sidebar */
   }
   
   .weather-sidebar {
@@ -851,12 +846,12 @@ body {
   }
   
   .weather-bento {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr); /* Passe à 3 colonnes pour le layout bento */
   }
   
   .main-weather-card {
-    grid-column: span 3;
-    grid-row: span 1;
+    grid-column: span 3; /* La carte principale s'étend sur 3 colonnes */
+    grid-row: span 1; /* Ne s'étend plus que sur 1 ligne */
   }
   
   .location-card {
@@ -870,17 +865,17 @@ body {
 
 @media (max-width: 768px) {
   .container {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Une seule colonne pour les petits écrans */
     grid-template-rows: auto auto 1fr auto;
     grid-template-areas: 
       "header"
       "sidebar"
       "main"
-      "footer";
+      "footer"; /* Réarrangement des zones pour mobile */
   }
   
   .weather-sidebar {
-    position: static;
+    position: static; /* La sidebar n'est plus fixe en mobile */
     width: 100%;
     height: auto;
     border-right: none;
@@ -888,13 +883,13 @@ body {
   }
   
   .weather-bento {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Une seule colonne pour le layout bento sur mobile */
   }
   
   .main-weather-card,
   .location-card,
   .forecast-timeline {
-    grid-column: span 1;
+    grid-column: span 1; /* Tous les éléments s'étendent sur toute la largeur */
   }
   
   .timeline-content {
@@ -904,7 +899,7 @@ body {
   }
   
   .timeline-line {
-    display: none;
+    display: none; /* Cache la ligne de temps en mobile */
   }
 }
 
