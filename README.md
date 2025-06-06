@@ -18,7 +18,7 @@ Ce projet vise à fournir des informations météorologiques précises et détai
 * **Mode Sombre (Dark Mode) :** Un bouton permet de basculer facilement entre un thème clair et un thème sombre, avec persistance de la préférence.
 * **Layout Adaptatif (Bento Box) :** L'interface utilise une grille "bento box" pour organiser les informations de manière esthétique et fonctionnelle, s'adaptant aux différentes tailles d'écran (responsive design).
 * **Gestion des États de l'Application :** Affichage d'états de chargement et de messages d'erreur clairs pour une meilleure expérience utilisateur.
-
+* ** le site 
 ## Technologies Utilisées
 
 * **HTML5 :** Structure sémantique de la page web.
@@ -29,31 +29,7 @@ Ce projet vise à fournir des informations météorologiques précises et détai
 * **API Météo Concept :** Fournit les données de prévisions météorologiques.
 * **API Gouv.fr (Géolocalisation) :** Utilisée pour la recherche de communes par code postal et l'obtention des coordonnées géographiques.
 
-## Configuration et Installation
-
-Pour exécuter ce projet localement, suivez les étapes ci-dessous :
-
-1.  **Cloner le dépôt :**
-   
-    git clone https://github.com/erhankilinc/ 
-    cd INSTANTWeatherV2
-    
-    (Remplacez `[URL_DE_VOTRE_DEPOT]` par l'URL réelle de votre dépôt GitHub.)
-
-2.  **Obtenir une clé API Météo Concept :**
-    Ce projet utilise l'API Météo Concept. Vous devrez obtenir votre propre token API personnel depuis leur site web.
-
-3.  **Configurer le Token API :**
-    Ouvrez le fichier `script.js` et remplacez le placeholder du token par votre propre clé API :
-    ```javascript
-    const API_CONFIG = {
-        TOKEN: '40cb912aff2f7792bb9ecd409d50ed4e2dca5e462e8e7ae2643237298e6198be'
-        GEO_API: '[https://geo.api.gouv.fr/communes](https://geo.api.gouv.fr/communes)',
-        METEO_API: '[https://api.meteo-concept.com/api/forecast/daily](https://api.meteo-concept.com/api/forecast/daily)'
-    };
-    ```
-
-4.  **Ouvrir le projet :**
+3.  **Ouvrir le projet :**
     Ouvrez simplement le fichier `index.html` dans votre navigateur web préféré. Aucune installation de serveur local n'est nécessaire pour le fonctionnement de base, car toutes les opérations sont côté client.
 
 ## Utilisation
@@ -67,3 +43,9 @@ Pour exécuter ce projet localement, suivez les étapes ci-dessous :
 
 ## Structure du Projet
 https://erhankilinc.github.io/Instant_WeatherV2/
+
+Ce projet a été validé avec succès par les validateurs officiels du W3C pour son code HTML et CSS.
+
+## Validation et Certification W3C
+Validation CSS (Jigsaw W3C Validator) : https://jigsaw.w3.org/css-validator/
+Validation HTML (Nu HTML Checker) : https://validator.w3.org/nu/?doc=https%3A%2F%2Fdrakyfr.github.io%2Finstant-weather-v2%2F
