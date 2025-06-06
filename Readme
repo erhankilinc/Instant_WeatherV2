@@ -28,7 +28,7 @@ INSTANTWeatherV2 est une interface web moderne et modulaire permettant de consul
 * **API Météo Concept :** Fournit les données de prévisions météorologiques.
 * **API Gouv.fr (Géolocalisation) :** Utilisée pour la recherche de communes par code postal et l'obtention des coordonnées géographiques.
 
-## Configuration et Installation
+## Configuration et Installatio
 
 Pour exécuter ce projet localement, suivez les étapes ci-dessous :
 
