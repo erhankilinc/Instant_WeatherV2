@@ -3,166 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instant Weather V2 - Prévisions Météorologiques</title>
+    <title>WeatherGrid - Interface Météorologique Révolutionnaire</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Leaflet pour les cartes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
+        <!-- SIDEBAR FIXE - Zone de contrôle -->
+        <aside class="weather-sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-th-large"></i>
+                    <h1>WeatherGrid</h1>
+                </div>
+                <p class="sidebar-subtitle">Interface météorologique modulaire</p>
+            </div>
+
+            <form id="weather-form" class="sidebar-form">
+                <!-- Code postal -->
+                <div class="form-section">
+                    <label for="code-postal">Code postal</label>
+                    <input 
+                        type="text" 
+                        id="code-postal" 
+                        placeholder="75001"
+                        maxlength="5"
+                        pattern="[0-9]{5}"
+                        required
+                    >
+                </div>
+
+                <!-- Commune -->
+                <div class="form-section">
+                    <label for="commune-select">Commune</label>
+                    <select id="commune-select" disabled>
+                        <option value="">Sélectionnez...</option>
+                    </select>
+                </div>
+
+                <!-- Contrôle des jours -->
+                <div class="form-section">
+                    <label>Période de prévision</label>
+                    <div class="days-control">
+                        <div class="days-display">
+                            <span>Jours</span>
+                            <span class="days-value" id="days-value">3</span>
+                        </div>
+                        <input 
+                            type="range" 
+                            id="days-slider" 
+                            class="days-slider"
+                            min="1" 
+                            max="7" 
+                            value="3"
+                        >
+                    </div>
+                </div>
+
+                <!-- Options -->
+                <div class="form-section">
+                    <label>Données supplémentaires</label>
+                    <div class="options-list">
+                        <label class="option-item">
+                            <input type="checkbox" id="latitude" name="options" value="latitude">
+                            <div class="option-checkbox"></div>
+                            <span class="option-label">Latitude</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" id="longitude" name="options" value="longitude">
+                            <div class="option-checkbox"></div>
+                            <span class="option-label">Longitude</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" id="rain" name="options" value="rain">
+                            <div class="option-checkbox"></div>
+                            <span class="option-label">Précipitations</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" id="wind" name="options" value="wind">
+                            <div class="option-checkbox"></div>
+                            <span class="option-label">Vent</span>
+                        </label>
+                        <label class="option-item">
+                            <input type="checkbox" id="wind-direction" name="options" value="wind-direction">
+                            <div class="option-checkbox"></div>
+                            <span class="option-label">Direction vent</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" id="submit-btn" class="search-button" disabled>
+                    <i class="fas fa-search"></i>
+                    Analyser
+                </button>
+            </form>
+        </aside>
+
+        <!-- HEADER - Barre de titre -->
         <header class="header">
             <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-cloud-sun"></i>
-                    <h1>Instant Weather</h1>
+                <h1 class="header-title">Tableau de bord météorologique</h1>
+                <div class="header-controls">
+                    <button id="dark-mode-btn" class="mode-toggle" aria-label="Basculer le thème">
+                        <i class="fas fa-moon"></i>
+                    </button>
                 </div>
-                <p class="subtitle">Prévisions météorologiques précises et détaillées</p>
             </div>
         </header>
 
-        <!-- Main Content -->
+        <!-- MAIN - Contenu principal en bento box -->
         <main class="main-content">
-            <!-- Search Form -->
-            <section class="search-section">
-                <div class="search-card">
-                    <h2><i class="fas fa-search"></i> Rechercher une commune</h2>
-                    <form id="weather-form" class="weather-form">
-                        <!-- Code Postal Input -->
-                        <div class="form-group">
-                            <label for="code-postal">
-                                <i class="fas fa-map-marker-alt"></i>
-                                Code postal (5 chiffres)
-                            </label>
-                            <input 
-                                type="text" 
-                                id="code-postal" 
-                                placeholder="Ex: 75001, 69000, 13000..." 
-                                maxlength="5"
-                                pattern="[0-9]{5}"
-                                required
-                                autocomplete="postal-code"
-                                aria-describedby="postal-help"
-                            >
-                            <small id="postal-help">Saisissez un code postal français valide</small>
-                        </div>
-
-                        <!-- Commune Selection -->
-                        <div class="form-group">
-                            <label for="commune-select">
-                                <i class="fas fa-city"></i>
-                                Sélectionnez votre commune
-                            </label>
-                            <select id="commune-select" disabled aria-describedby="commune-help">
-                                <option value="">-- Sélectionnez une commune --</option>
-                            </select>
-                            <small id="commune-help">La liste sera disponible après avoir saisi un code postal valide</small>
-                        </div>
-
-                        <!-- Days Selection -->
-                        <div class="form-group">
-                            <label for="days-slider">
-                                <i class="fas fa-calendar-alt"></i>
-                                Nombre de jours de prévision: <span id="days-value">3</span>
-                            </label>
-                            <input 
-                                type="range" 
-                                id="days-slider" 
-                                min="1" 
-                                max="7" 
-                                value="3"
-                                class="slider"
-                                aria-describedby="days-help"
-                            >
-                            <small id="days-help">Choisissez entre 1 et 7 jours</small>
-                        </div>
-
-                        <!-- Additional Options -->
-                        <div class="form-group">
-                            <fieldset>
-                                <legend>
-                                    <i class="fas fa-cog"></i>
-                                    Informations supplémentaires
-                                </legend>
-                                <div class="checkbox-grid">
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" id="latitude" name="options" value="latitude">
-                                        <span class="checkmark"></span>
-                                        Latitude
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" id="longitude" name="options" value="longitude">
-                                        <span class="checkmark"></span>
-                                        Longitude
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" id="rain" name="options" value="rain">
-                                        <span class="checkmark"></span>
-                                        Cumul de pluie (mm)
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" id="wind" name="options" value="wind">
-                                        <span class="checkmark"></span>
-                                        Vent moyen (km/h)
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" id="wind-direction" name="options" value="wind-direction">
-                                        <span class="checkmark"></span>
-                                        Direction du vent (°)
-                                    </label>
-                                </div>
-                            </fieldset>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <button type="submit" id="submit-btn" class="submit-btn" disabled>
-                            <i class="fas fa-search"></i>
-                            Obtenir les prévisions
-                        </button>
-                    </form>
-                </div>
-            </section>
-
-            <!-- Results Section -->
-            <section class="results-section" id="results-section" style="display: none;">
-                <div class="results-header">
-                    <h2 id="city-name">Prévisions pour</h2>
-                    <div class="location-info" id="location-info"></div>
-                </div>
-                <div class="weather-grid" id="weather-grid"></div>
-            </section>
-
-            <!-- Loading Spinner -->
-            <div class="loading" id="loading" style="display: none;">
-                <div class="spinner"></div>
-                <p>Chargement des données météorologiques...</p>
+            <!-- Barre de statut -->
+            <div class="status-bar" id="status-bar">
+                Prêt pour l'analyse météorologique
             </div>
 
-            <!-- Error Message -->
-            <div class="error-message" id="error-message" style="display: none;">
-                <i class="fas fa-exclamation-triangle"></i>
-                <p id="error-text"></p>
+            <!-- Zone de chargement -->
+            <div class="loading-state" id="loading" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Analyse des données en cours...</p>
+            </div>
+
+            <!-- Zone d'erreur -->
+            <div class="error-state" id="error-message" style="display: none;">
+                <p class="error-text" id="error-text"></p>
+            </div>
+
+            <!-- Grille Bento des résultats -->
+            <div class="weather-bento" id="weather-bento" style="display: none;">
+                <!-- Carte météo principale (2x2) -->
+                <div class="main-weather-card" id="main-weather-card">
+                    <div class="current-temp" id="current-temp">--°</div>
+                    <div class="current-condition" id="current-condition">--</div>
+                    <div class="current-details" id="current-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Min</div>
+                            <div class="detail-value" id="temp-min">--°</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Max</div>
+                            <div class="detail-value" id="temp-max">--°</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Pluie</div>
+                            <div class="detail-value" id="rain-prob">--%</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Soleil</div>
+                            <div class="detail-value" id="sun-hours">--h</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carte de localisation (2x1) -->
+                <div class="location-card" id="location-card">
+                    <div class="location-header">
+                        <div class="location-title" id="location-title">Localisation</div>
+                        <div class="location-coords" id="location-coords">-- , --</div>
+                    </div>
+                    <div class="location-map" id="location-map">
+                        <!-- La carte Leaflet sera insérée ici -->
+                    </div>
+                </div>
+
+                <!-- Cartes métriques individuelles (1x1 chacune) -->
+                <div class="metric-card" id="wind-card" style="display: none;">
+                    <div class="metric-header">
+                        <span class="metric-label">Vent</span>
+                        <i class="fas fa-wind metric-icon"></i>
+                    </div>
+                    <div class="metric-value" id="wind-speed">-- km/h</div>
+                    <div class="metric-subtitle" id="wind-direction">--</div>
+                </div>
+
+                <div class="metric-card" id="rain-card" style="display: none;">
+                    <div class="metric-header">
+                        <span class="metric-label">Précipitations</span>
+                        <i class="fas fa-cloud-rain metric-icon"></i>
+                    </div>
+                    <div class="metric-value" id="rain-amount">-- mm</div>
+                    <div class="metric-subtitle">Cumul 24h</div>
+                </div>
+
+                <div class="metric-card" id="coords-card" style="display: none;">
+                    <div class="metric-header">
+                        <span class="metric-label">Coordonnées</span>
+                        <i class="fas fa-map-marker-alt metric-icon"></i>
+                    </div>
+                    <div class="metric-value" id="coordinates-display">--</div>
+                    <div class="metric-subtitle">Lat, Lon</div>
+                </div>
+            </div>
+
+            <!-- Grille de prévisions en cartes (pleine largeur) -->
+            <div class="forecast-cards" id="forecast-cards" style="display: none;">
+                <div class="forecast-header">
+                    <h2 class="forecast-title">Prévisions détaillées</h2>
+                    <p class="forecast-subtitle">Evolution météorologique sur la période sélectionnée</p>
+                </div>
+                <div class="forecast-grid" id="forecast-grid">
+                    <!-- Les cartes de prévision seront générées ici -->
+                </div>
             </div>
         </main>
 
-        <!-- Dark Mode Toggle -->
-        <div class="dark-mode-toggle">
-            <button id="dark-mode-btn" aria-label="Basculer le mode sombre">
-                <i class="fas fa-moon"></i>
-            </button>
-        </div>
-
-        <!-- Footer -->
+        <!-- FOOTER - Informations -->
         <footer class="footer">
             <div class="footer-content">
-                <p>&copy; 2025 Instant Weather V2 - Données fournies par Météo Concept API</p>
-                <div class="footer-links">
-                    <a href="#" aria-label="Code source sur GitHub">
-                        <i class="fab fa-github"></i>
-                    </a>
-                </div>
+                <p>&copy; 2025 WeatherGrid - Interface modulaire</p>
+                <p>Données: Météo Concept API</p>
             </div>
         </footer>
     </div>
