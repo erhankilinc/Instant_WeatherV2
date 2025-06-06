@@ -683,6 +683,6 @@ function setTheme(theme) {
 }
 
 /**
- * Initialisation de l'application lorsque le DOM est entièrement chargé
+ * Initialisation de l'application lorsque le DOM est entièrement charge
  */
 document.addEventListener('DOMContentLoaded', initApp);
