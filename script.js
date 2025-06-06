@@ -10,7 +10,7 @@ const API_CONFIG = {
     METEO_API: 'https://api.meteo-concept.com/api/forecast/daily'
 };
 
-// Éléments DOM
+// Éléments DOM 
 const elements = {
     form: document.getElementById('weather-form'),
     codePostalInput: document.getElementById('code-postal'),
@@ -103,12 +103,13 @@ function updateStatusBar(message) {
 async function handleCodePostalInput() {
     const codePostal = elements.codePostalInput.value.trim();
     
-    // Reset
+    // Reset les sélections et les messages d'erreur
     elements.communeSelect.innerHTML = '<option value="">Sélectionnez...</option>';
     elements.communeSelect.disabled = true;
     elements.submitBtn.disabled = true;
     hideError();
 
+    // Valider le format du code postal (5 chiffres)
     if (!/^\d{5}$/.test(codePostal)) {
         if (codePostal.length > 0) {
             updateStatusBar('Code postal invalide');
@@ -122,6 +123,7 @@ async function handleCodePostalInput() {
     try {
         updateStatusBar('Recherche des communes...');
         showLoading(true);
+        // Appel à l'API pour récupérer les communes
         const communes = await fetchCommunesByCodePostal(codePostal);
         displayCommunes(communes);
         updateStatusBar(`${communes.length} commune(s) trouvée(s)`);
@@ -141,6 +143,7 @@ async function fetchCommunesByCodePostal(codePostal) {
     if (!response.ok) throw new Error("Erreur réseau");
     
     const geoJsonData = await response.json();
+    // Mapper les données GeoJSON pour extraire les informations pertinentes des communes
     const communes = geoJsonData.features?.map(feature => ({
         code: feature.properties.code,
         nom: feature.properties.nom,
@@ -162,6 +165,7 @@ function displayCommunes(communes) {
         return;
     }
 
+    // Ajouter chaque commune comme option dans le sélecteur
     communes.forEach(commune => {
         const option = document.createElement("option");
         option.value = commune.code;
@@ -177,7 +181,7 @@ function displayCommunes(communes) {
  */
 function handleCommuneChange() {
     const selectedCode = elements.communeSelect.value;
-    elements.submitBtn.disabled = !selectedCode;
+    elements.submitBtn.disabled = !selectedCode; // Activer le bouton de soumission si une commune est sélectionnée
     
     if (selectedCode) {
         currentCityData = currentCommunes.find(c => c.code === selectedCode);
@@ -189,7 +193,7 @@ function handleCommuneChange() {
  * Gestion de la soumission du formulaire
  */
 async function handleFormSubmit(event) {
-    event.preventDefault();
+    event.preventDefault(); // Empêcher le rechargement de la page
     
     const selectedCommune = elements.communeSelect.value;
     const daysCount = parseInt(elements.daysSlider.value);
@@ -205,6 +209,7 @@ async function handleFormSubmit(event) {
         hideError();
         updateStatusBar('Récupération des données météorologiques...');
         
+        // Récupérer les données météo pour la commune sélectionnée
         const meteoData = await fetchMeteoByCommune(selectedCommune, daysCount);
         updateStatusBar('Affichage des résultats');
         
@@ -236,6 +241,7 @@ async function fetchMeteoByCommune(selectedCommune, numberOfDays = 1) {
 
     const data = await response.json();
     
+    // Gérer les différentes structures de réponse de l'API
     let forecasts = null;
     if (data.forecast && Array.isArray(data.forecast)) {
         forecasts = data.forecast;
@@ -251,7 +257,7 @@ async function fetchMeteoByCommune(selectedCommune, numberOfDays = 1) {
 
     return {
         city: data.city || { name: 'Commune sélectionnée' },
-        forecasts: forecasts.slice(0, numberOfDays)
+        forecasts: forecasts.slice(0, numberOfDays) // Limiter le nombre de jours de prévisions
     };
 }
 
@@ -259,7 +265,7 @@ async function fetchMeteoByCommune(selectedCommune, numberOfDays = 1) {
  * Affichage des données météo dans le layout Bento
  */
 function displayWeatherData(cityData, forecasts, selectedOptions) {
-    const todayWeather = forecasts[0];
+    const todayWeather = forecasts[0]; // La première prévision est pour aujourd'hui
     
     // Affichage de la carte météo principale
     displayMainWeatherCard(todayWeather);
@@ -267,7 +273,7 @@ function displayWeatherData(cityData, forecasts, selectedOptions) {
     // Affichage de la carte de localisation
     displayLocationCard(cityData, selectedOptions);
     
-    // Affichage des cartes métriques optionnelles
+    // Affichage des cartes métriques optionnelles en fonction des sélections
     displayMetricCards(todayWeather, selectedOptions);
     
     // Affichage des cartes de prévisions
@@ -277,7 +283,7 @@ function displayWeatherData(cityData, forecasts, selectedOptions) {
     elements.weatherBento.style.display = 'grid';
     elements.forecastCards.style.display = 'block';
     
-    // Redimensionner la carte après affichage
+    // Redimensionner la carte après affichage pour s'assurer qu'elle s'affiche correctement
     setTimeout(() => {
         if (currentMap) {
             currentMap.invalidateSize();
@@ -315,7 +321,7 @@ function displayLocationCard(cityData, selectedOptions) {
         elements.locationCoords.textContent = `${latitude.toFixed(3)}, ${longitude.toFixed(3)}`;
     }
     
-    // Initialiser la carte
+    // Initialiser la carte si les coordonnées sont disponibles
     if (latitude && longitude) {
         initLocationMap(latitude, longitude, cityData.nom);
     }
@@ -325,16 +331,16 @@ function displayLocationCard(cityData, selectedOptions) {
  * Initialisation de la carte de localisation
  */
 function initLocationMap(latitude, longitude, cityName) {
-    // Nettoyer la carte existante
+    // Nettoyer la carte existante pour éviter les problèmes de superposition
     if (currentMap) {
         currentMap.remove();
         currentMap = null;
     }
     
-    // Attendre que le conteneur soit visible et ait une taille
+    // Attendre que le conteneur soit visible et ait une taille définie
     setTimeout(() => {
         try {
-            // Créer la nouvelle carte
+            // Créer la nouvelle carte Leaflet
             currentMap = L.map('location-map', {
                 center: [latitude, longitude],
                 zoom: 13,
@@ -344,19 +350,19 @@ function initLocationMap(latitude, longitude, cityName) {
                 dragging: true
             });
 
-            // Ajouter les tuiles
+            // Ajouter les tuiles OpenStreetMap
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 18,
                 attribution: '© OpenStreetMap contributors'
             }).addTo(currentMap);
 
-            // Ajouter un marqueur
+            // Ajouter un marqueur à la position de la ville
             L.marker([latitude, longitude])
                 .addTo(currentMap)
                 .bindPopup(`<strong>${cityName}</strong><br>${latitude.toFixed(4)}, ${longitude.toFixed(4)}`)
                 .openPopup();
             
-            // Forcer le redimensionnement de la carte
+            // Forcer le redimensionnement de l carte après son affichage
             setTimeout(() => {
                 if (currentMap) {
                     currentMap.invalidateSize();
@@ -372,17 +378,17 @@ function initLocationMap(latitude, longitude, cityName) {
 }
 
 /**
- * Affichage des cartes métriques optionnelles
+ * Affichage des carte optionnelles
  */
 function displayMetricCards(weather, selectedOptions) {
     console.log('Options sélectionnées:', selectedOptions);
     console.log('Données météo pour les métriques:', weather);
     
-    // Carte vent - TOUJOURS afficher la direction si disponible quand "vent" est coché
+    // Gérer l'affichage de la carte Vent
     if (selectedOptions.includes('wind') || selectedOptions.includes('wind-direction')) {
         elements.windSpeed.textContent = `${Math.round(weather.wind10m || 0)} km/h`;
         
-        // Vérifier toutes les propriétés possibles pour la direction du vent
+        // Vérifier toutes les propriétés possibles pour la direction du vent de l'API
         let windDirection = weather.dirwind10m || weather.dirwind || weather.wind_direction || weather.dir_wind;
         
         if (windDirection !== undefined && windDirection !== null && windDirection !== '') {
@@ -396,15 +402,19 @@ function displayMetricCards(weather, selectedOptions) {
         }
         
         elements.windCard.style.display = 'block';
+    } else {
+        elements.windCard.style.display = 'none'; // Masquer la carte si non sélectionnée
     }
     
-    // Carte pluie
+    // Gérer l'affichage de la carte Pluie
     if (selectedOptions.includes('rain')) {
         elements.rainAmount.textContent = `${weather.rr10 || 0} mm`;
         elements.rainCard.style.display = 'block';
+    } else {
+        elements.rainCard.style.display = 'none'; // Masquer la carte si non sélectionnée
     }
     
-    // Carte coordonnées
+    // Gérer l'affichage de la carte Coordonnées
     if (selectedOptions.includes('latitude') || selectedOptions.includes('longitude')) {
         let coordText = '';
         if (currentCityData.centre && currentCityData.centre.coordinates) {
@@ -421,6 +431,8 @@ function displayMetricCards(weather, selectedOptions) {
         }
         elements.coordinatesDisplay.textContent = coordText;
         elements.coordsCard.style.display = 'block';
+    } else {
+        elements.coordsCard.style.display = 'none'; // Masquer la carte si non sélectionnée
     }
 }
 
@@ -428,8 +440,9 @@ function displayMetricCards(weather, selectedOptions) {
  * Affichage des cartes de prévisions
  */
 function displayForecastCards(forecasts) {
-    elements.forecastGrid.innerHTML = '';
+    elements.forecastGrid.innerHTML = ''; // Nettoyer les prévisions précédentes
     
+    // Créer et ajouter une carte pour chaque jour de prévision
     forecasts.forEach((forecast, index) => {
         const forecastCard = createForecastCard(forecast, index);
         elements.forecastGrid.appendChild(forecastCard);
@@ -441,7 +454,7 @@ function displayForecastCards(forecasts) {
  */
 function createForecastCard(forecast, index) {
     const card = document.createElement('div');
-    card.className = index === 0 ? 'forecast-card current-day' : 'forecast-card';
+    card.className = index === 0 ? 'forecast-card current-day' : 'forecast-card'; // Style spécial pour aujourd'hui
     
     const date = new Date(forecast.datetime);
     const dateStr = index === 0 ? "Aujourd'hui" : formatDate(date);
@@ -458,7 +471,7 @@ function createForecastCard(forecast, index) {
     const windSpeed = Math.round(forecast.wind10m || 0);
     const rainAmount = forecast.rr10 || 0;
     
-    // Direction du vent - vérifier plusieurs propriétés possibles
+    // Direction du vent - vérifier plusieurs propriétés possibles de l'API
     let windDisplay = `${windSpeed} km/h`;
     let windDirection = forecast.dirwind10m || forecast.dirwind || forecast.wind_direction || forecast.dir_wind;
     
@@ -511,35 +524,35 @@ function createForecastCard(forecast, index) {
 }
 
 /**
- * Obtention de l'icône météorologique
+ * Obtention de l'icône météorologique en fonction du code météo
  */
 function getWeatherIcon(weatherCode) {
     const iconMap = {
-        0: 'fas fa-sun',
-        1: 'fas fa-cloud-sun',
-        2: 'fas fa-cloud-sun',
-        3: 'fas fa-cloud',
-        4: 'fas fa-cloud',
-        5: 'fas fa-cloud',
-        6: 'fas fa-cloud-rain',
-        7: 'fas fa-cloud-rain',
-        10: 'fas fa-cloud-rain',
-        11: 'fas fa-cloud-rain',
-        12: 'fas fa-cloud-rain',
-        13: 'fas fa-cloud-rain',
-        16: 'fas fa-snowflake',
-        20: 'fas fa-cloud-bolt',
-        30: 'fas fa-cloud-bolt',
-        40: 'fas fa-smog',
-        100: 'fas fa-moon',
-        101: 'fas fa-cloud-moon'
+        0: 'fas fa-sun', // Ensoleillé
+        1: 'fas fa-cloud-sun', // Peu nuageux
+        2: 'fas fa-cloud-sun', // Ciel voilé
+        3: 'fas fa-cloud', // Nuageux
+        4: 'fas fa-cloud', // Très nuageux
+        5: 'fas fa-cloud', // Couvert
+        6: 'fas fa-cloud-rain', // Bruine
+        7: 'fas fa-cloud-rain', // Bruine verglaçante
+        10: 'fas fa-cloud-rain', // Pluie faible
+        11: 'fas fa-cloud-rain', // Pluie modérée
+        12: 'fas fa-cloud-rain', // Pluie forte
+        13: 'fas fa-cloud-rain', // Pluie verglaçante
+        16: 'fas fa-snowflake', // Neige faible
+        20: 'fas fa-cloud-bolt', // Averses
+        30: 'fas fa-cloud-bolt', // Orage
+        40: 'fas fa-smog', // Brouillard
+        100: 'fas fa-moon', // Clair (nuit)
+        101: 'fas fa-cloud-moon' // Peu nuageux (nuit)
     };
     
-    return iconMap[weatherCode] || 'fas fa-question';
+    return iconMap[weatherCode] || 'fas fa-question'; // Icône par défaut si le code est inconnu
 }
 
 /**
- * Obtention de la description météorologique
+ * Obtention de la description météorologique en fonction du code météo
  */
 function getWeatherDescription(weatherCode) {
     const descriptions = {
@@ -563,11 +576,11 @@ function getWeatherDescription(weatherCode) {
         101: 'Peu nuageux'
     };
     
-    return descriptions[weatherCode] || 'Conditions inconnues';
+    return descriptions[weatherCode] || 'Conditions inconnues'; // Description par défaut
 }
 
 /**
- * Conversion direction du vent
+ * Conversion de la direction du vent (degrés en points cardinaux)
  */
 function getWindDirection(degrees) {
     const directions = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSO', 'SO', 'OSO', 'O', 'ONO', 'NO', 'NNO'];
@@ -578,7 +591,7 @@ function getWindDirection(degrees) {
 }
 
 /**
- * Formatage de la date
+ * Formatage de la date en un format lisible (ex: "lundi 3 juin")
  */
 function formatDate(date) {
     const options = { weekday: 'long', month: 'long', day: 'numeric' };
@@ -586,7 +599,7 @@ function formatDate(date) {
 }
 
 /**
- * Récupération des options sélectionnées
+ * Récupération des options de checkbox sélectionnées
  */
 function getSelectedOptions() {
     return Array.from(elements.checkboxes)
@@ -595,33 +608,35 @@ function getSelectedOptions() {
 }
 
 /**
- * Mise à jour de la valeur du slider
+ * Mise à jour de la valeur affichée du slider de jours
  */
 function updateDaysValue() {
     elements.daysValue.textContent = elements.daysSlider.value;
 }
 
 /**
- * Affichage/masquage du loading
+ * Affichage/masquage de l'indicateur de chargement
  */
 function showLoading(show) {
     elements.loading.style.display = show ? 'flex' : 'none';
     if (show) {
+        // Masquer les résultats précédents pendant le chargement
         elements.weatherBento.style.display = 'none';
         elements.forecastCards.style.display = 'none';
     }
 }
 
 /**
- * Affichage d'un message d'erreur
+ * Affichage d'un message d'erreur temporaire
  */
 function showError(message) {
     elements.errorText.textContent = message;
     elements.errorMessage.style.display = 'block';
+    // Masquer les résultats en cas d'erreur
     elements.weatherBento.style.display = 'none';
     elements.forecastCards.style.display = 'none';
     
-    setTimeout(hideError, 5000);
+    setTimeout(hideError, 5000); // Masquer l'erreur après 5 secondes
 }
 
 /**
@@ -632,7 +647,7 @@ function hideError() {
 }
 
 /**
- * Initialisation du mode sombre
+ * Initialisation du mode sombre en fonction des préférences de l'utilisateur ou du stockage local
  */
 function initDarkMode() {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -646,7 +661,7 @@ function initDarkMode() {
 }
 
 /**
- * Basculement du mode sombre
+ * Basculement entre le mode clair et le mode sombre
  */
 function toggleDarkMode() {
     const currentTheme = document.documentElement.getAttribute('data-theme');
@@ -655,19 +670,19 @@ function toggleDarkMode() {
 }
 
 /**
- * Application du thème
+ * Application du thème (clair ou sombre) et stockage de la préférence
  */
 function setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
     
     const icon = elements.darkModeBtn.querySelector('i');
-    icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon'; // Changer l'icône du bouton
     
     updateStatusBar(`Thème ${theme === 'dark' ? 'sombre' : 'clair'} activé`);
 }
 
 /**
- * Initialisation au chargement
+ * Initialisation de l'application lorsque le DOM est entièrement chargé
  */
 document.addEventListener('DOMContentLoaded', initApp);
