@@ -34,7 +34,7 @@ Pour exécuter ce projet localement, suivez les étapes ci-dessous :
 
 1.  **Cloner le dépôt :**
     ```bash
-    git clone (https://github.com/erhankilinc)
+    git clone https://github.com/erhankilinc/
     cd INSTANTWeatherV2
     ```
 
@@ -64,4 +64,4 @@ Pour exécuter ce projet localement, suivez les étapes ci-dessous :
 6.  **Mode Sombre :** Utilisez l'icône de lune/soleil en haut à droite pour basculer le thème de l'interface.
 
 ## Structure du Projet
-`(https://erhankilinc.github.io/Instant_WeatherV2/)`
+https://erhankilinc.github.io/Instant_WeatherV2/
