@@ -765,4 +765,4 @@ function setTheme(theme) {
 /**
  * Initialisation au chargement de la page
  */
-document.addEventListener('DOMContentLoaded', initApp);
+document.addEventListener('DOMContentLoaded', initApp); // 
